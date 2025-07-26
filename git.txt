@@ -1,0 +1,237 @@
+https://www.yalco.kr/lectures/git-github/
+
+
+$ git config --global user.name
+
+$ git config --global user.email
+
+$ git config -global init.defaultBranch main
+
+$ git init
+(VS code, 내가 원하는 파일에서 git Bash 터미널을 통해)
+
+폴더에 생성되는
+.git 폴더는 굉장히 중요하므로, 삭제 금지
+
+$ git status (현재의 폴더를 git의 관점으로 보여줌)
+
+git의 관리목록에서 파일 제외하기
+- 자동으로 생성되거나 다운로드 할 수 있는 파일들(빌드 결과물, 라이브러리 등)
+- 보안상 민감한 정보를 담은 파일
+
+.gitignore 파일을 만들고
+그 안에 제외하고 싶은 파일 이름 넣기
+
+# 이렇게 #를 사용해서 주석
+
+# 모든 file.c
+file.c
+
+# 최상위 폴더의 file.c
+/file.c
+
+# 모든 .c 확장자 파일
+*.c
+
+# .c 확장자지만 무시하지 않을 파일
+!not_ignore_this.c
+
+# logs란 이름의 파일 또는 폴더와 그 내용들
+logs
+
+# logs란 이름의 폴더와 그 내용들
+logs/
+
+# logs 폴더 바로 안의 debug.log와 .c 파일들
+logs/debug.log
+logs/*.c
+
+# logs 폴더 바로 안, 또는 그 안의 다른 폴더(들) 안의 debug.log
+logs/**/debug.log
+
+_______.gitignore 양식 끝
+
+
+$ git add 파일이름
+파일을 git의 캡슐?에 넣기
+
+$ git add . (모든 파일 넣기)
+
+$ git commit
+
+commit 시 Vim 모드로 진입하게 된다. 이를 다루는 자세한 법은 강좌를 따로 찾자.
+작업				Vi 명령어		상세
+입력 시작			i			명령어 입력 모드에서 텍스트 입력 모드로 전환
+입력 종료			ESC			텍스트 입력 모드에서 명령어 입력 모드로 전환
+저장 없이 종료		:q	
+저장 없이 강제 종료	:q!			입력한 것이 있을 때 사용
+저장하고 종료		:wq			입력한 것이 있을 때 사용
+위로 스크롤		k			git log등에서 내역이 길 때 사용
+아래로 스크롤		j			git log등에서 내역이 길 때 사용
+
+$ git log
+
+$ git log --graph --oneline --all
+
+$ git commit -m "커밋 이름"
+
+$ git diff (j와 k로 조작 :q로 종료)
+
+$ git commit -am "커밋이름" --> 파일을 새로 생성하지 않았을떄.
+
+$ git reset과 $ git revert
+reset은 과거로 돌아간 다음 그 뒤 행적은 전부 삭제.
+revert는 과거 커밋에서 수정한 어떤 내용만 취소. ( 협업시 공유된 코드는 revert 권장 )
+
+$ git reset --hard cded49bbce2e0e2d802b521d4e6813e69dd8fb9d --> 커밋 아이디
+
+reset 전으로 돌아가기, --hard 뒤에 아이디가 없으면, 마지막 커밋 시점으로 돌아감
+
+$ git revert 25644e91ffdffcec931828ba7f8de5f349aaee6b --> 커밋 아이디
+
+히스토리가 자세함.
+
+커밋끼리 충돌할 시, 직접 뭔가 해야함. 이떄, 오류메시지와 함께
+문제 해결 후
+
+$ git revert --continue
+
+하라고 알람이 뜸.
+커밋하지 않고 revert 하기
+
+$ git revert --no-commit 25644e91ffdffcec931828ba7f8de5f349aaee6b 
+
+수정만 되고 커밋은 되지 않음
+
+
+브랜치 만들어보기!!!
+
+$ git branch {name of branch} --> 브랜치 생성
+$ git branch --> 현재 생성된 브랜치 리스트 확인
+
+$ git switch {name of branch} --> 현재 브랜치 바꾸기
+$ git stitch -c new-teams --> 브랜치 생성하면서 동시에 이동하기
+
+$ git branch -d {name of branch} --> 브랜치 삭제
+
+$ git branch -D {nob} --> 다른 브랜치로 적용되지 않은 내용의 커밋이 있을때 대문자로 강제 삭제
+
+$ gti branch -m {name of branch} {new name for branch} --> 이름 바꾸기
+
+$ git branch {name of branch} {commit Hash} --> 원하는 커밋에서 브랜치 만들기
+
+$ git switch -c {nob} {ch} --> 동일하되, 바로 들어가기
+
+브랜치 합치는 방법 
+1. merge --> 병합, 두 브랜치를 이어붙임. 새로운 커밋이 생김.
+2. rebase -> 브랜치의 마디와 커밋들을 특정 브랜치 뒤에 이어붙임.
+
+둘의 차이!
+rebase는 한 줄로. merge는 커밋이 남음.
+
+$ git merge (name of branch)
+
+merge는 reset으로 되돌리기 가능.
+사용이 끝난 branch는 삭제하기(상의하고 나서)
+$ git branch -d (name of branch)
+
+rebase는 병합 당하는 브랜치에서 명령 실행하기
+--> main에 new-teams를 rebase하고 싶다면, new-teams 브랜치에서 rebase 실행
+
+$ git rebase (name of branch) --> 위의 예시라면 new-teams 브랜치에서 $ git rebase main
+
+:: rebase 후에 두 가지가 한 줄기에 붙지만, 위치가 다르다.
+따라서, merge를 이용해 두 가지의 시작점을 일치시키자.
+
+예시에서 rebase 후
+$ git switch main
+$ git merge new-teams
+
+브랜치 간 충돌 해결하기
+
+$ git merge --abort 
+merge를 중단하고 원래 있던 곳으로 돌아감
+
+두 커밋에서 동시에 충돌한다면?
+rebase 할 때는?
+
+--> 만약 rebase를 취소하고 싶다면
+$ git rebase --abort
+
+하나의 커밋에서 충돌을 완수했다면
+$ git rebase --continue
+이 명령어를 이용하면 커밋을 앞으로 나아가면서 충돌을 하나하나 해결함
+
+github 에서 Token 발행 받아서 사용하기!
+- 혹시 모를 사고에 대비해서 토큰을 이용해 push pull을 할 수 있다! (만약 비밀번호를 그대로 주면 중간에 탈취 당할 수 있으므로)
+1. 토큰 발행
+github - 우측 상단 프로필 - Settings - Developer Settings - Personal access tokens
+이때, Fine-grained tokens와 calssic tokens가 있는데, 일단 classic을 사용함.
+
+이후 권한 허용 범위를 주고 토큰 생성
+
+2. 윈도우 설정
+윈도우 검색창에 "자격 증명 관리자" 검색 - Windows 자격 증명 - 아래 목록 중 github.com이라 쓰여있는 것을 수정하기
+
+3. 소스트리 설정
+소스트리 실행 - 상단바의 도구 - 옵션- 인증 - github.com 선택 - 편집 - 비밀번호 설정
+
+git repo에 협업자 추가하기
+- 상단의 Settings - Collaborators - add people - 깃아이디나 이메일
+
+$ git remote add origin {repo path}
+깃의 리포 가져오기 origin이란 이름으로
+
+$ git branch -M main
+main 브랜치를 프로젝트의 메인브랜치로
+
+$ git push -u origin main
+로컬 저장소의 내용을 repo에 업로드
+
+$ git remote
+$ git remote -v
+연동된 원격 저장소 보기
+
+$ git clone {https}
+repo 베껴오기. 커밋까지 모두 다.
+
+$ git push
+로컬 수정 사항 보내기
+
+$ git pull
+github의 수정사항을 받아오기
+
+pull 할 것이 있을때 push를 하면
+--> git push를 해도 repo보다 뒤처져 있으므로 에러 발생
+
+1. merge 방식으로 가져오기
+$ git pull --no-rebase
+내용을 가져온다음 merge 해버림
+
+2. rebase 방식으로 가져오기
+$ git pull --rebase
+내 로컬 main을 origin에 붙여 버림 ( 순서는 origin 다음에 main을 최종으로 pull함.)
+
+로컬 내용 강제 push
+$ git push --force
+
+사용에 주의
+
+
+
+로컬에 브랜치 만들어서 push하기
+$ git push -u origin {name of branch}
+
+$ git branch 는 로컬의 브랜치만 볼 수 있다.
+repo의 모든 브랜치를 보기 위해서
+$ git branch --all
+$ gir branch -a
+
+repo의 내용을 가져오기 위해
+$ git fetch
+
+repo에 있는 branch를 로컬에 가져와 사용하기
+$ git switch -t origin/from-remote
+
+$ git push origin --delete from-local
+repo에 있는 브랜치 삭제하기
